@@ -1,0 +1,52 @@
+[project]
+name = "intentd"
+version = "0.1.0"
+description = "A recoverable Python workflow runtime with transactional execution and bounded concurrency"
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic>=2.7",
+]
+
+[project.optional-dependencies]
+# The provider SDK is installed for imports; offline checks do not call its API.
+real = [
+    "anthropic>=1.6,<2",
+]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "ruff>=0.6",
+    "mypy>=1.11",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["orchestrator", "orchestrator.llm", "orchestrator.tools", "sim", "sim.scenarios", "bench"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+addopts = "-q --strict-markers"
+# Dependency deprecations are treated as test failures.
+filterwarnings = ["error::DeprecationWarning"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "ASYNC"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+files = ["orchestrator", "sim", "bench", "examples"]
+warn_unreachable = true
+disallow_any_explicit = false
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+strict = false
